@@ -134,15 +134,21 @@ pub struct MutationRoot;
 description = "Mutation Root",)]
 impl MutationRoot {
     #[graphql(name = "createStreamer")]
-    fn create_streamer(context: &Context, new_streamer: NewStreamer) -> FieldResult<Streamer> {
-        Ok(graphql_resolver::create_streamer(&context.db.clone()))
+    fn create_streamer(context: &Context, new_streamer: NewStreamer) -> FieldResult<Option<Streamer>> {
+        Ok(graphql_resolver::create_streamer(
+            &context.db.clone(),
+            new_streamer.firstname,
+        ))
     }
 }
 
 pub struct QueryRoot {}
 
-#[juniper::object(Context = Context,
-description = "Query Root")]
+#[juniper::object(
+    Context = Context,
+    interfaces = [&dyn Node],
+    description = "Query Root")
+]
 impl QueryRoot {
     #[graphql(description = "get a streamer")]
     fn streamer(context: &Context, id: String) -> FieldResult<Streamer> {
@@ -154,11 +160,6 @@ impl QueryRoot {
 
     #[graphql(description = "Node")]
     fn node(context: &Context, id: String) -> FieldResult<Option<&dyn Node>> {
-        let streamer = Streamer {
-            id: String::from("id"),
-            firstname: String::from("ozer"),
-        };
-
         Ok(None)
     }
 }

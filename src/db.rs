@@ -11,7 +11,11 @@ pub struct Streamer {
     pub age: i32,
 }
 
-pub fn create_streamer(client: Client) -> Result<InsertOneResult, Error> {
+pub struct NewStreamer {
+    pub firstname: String,
+}
+
+pub fn create_streamer(client: Client, streamer: NewStreamer) -> Result<InsertOneResult, Error> {
     let mut doc = Document::new();
 
     doc.insert("name".to_string(), Bson::String("ozer".to_string()));
